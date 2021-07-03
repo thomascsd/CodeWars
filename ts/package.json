@@ -1,0 +1,17 @@
+{
+  "name": "codewars-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-loader": "^9.2.3",
+    "tsconfigs": "^5.0.0",
+    "typescript": "^4.3.4"
+  }
+}
