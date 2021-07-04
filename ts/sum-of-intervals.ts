@@ -1,5 +1,5 @@
-export function sumOfIntervals(intervals: [number, number][]) {
-  let len = 0;
+function calArray(intervals: [number, number][]): [number, number][] {
+  let retList: [number, number][] = [];
   let x: number = 0;
   let y: number = 0;
   let x1 = 0;
@@ -30,14 +30,36 @@ export function sumOfIntervals(intervals: [number, number][]) {
       x = x1;
     } else if (x1 > x && x1 > y && y1 > x && y1 > y) {
       //x y x1 y1, 沒有重疊
-      len = len + (y1 - x1);
+      retList.push([x1, y1]);
     } else if (x1 < x && x1 < y && y1 < x && y1 < y) {
       // x1 y1 x y，沒有重疊
-      len = len + (y1 - x1);
+      retList.push([x1, y1]);
     }
   }
 
-  len += y - x;
+  retList.push([x, y]);
+
+  const sumOld = sum(intervals);
+  const sumNew = sum(retList);
+
+  if (sumNew !== sumOld) {
+    retList = calArray(retList);
+  }
+
+  return retList;
+}
+
+function sum(intervals: [number, number][]): number {
+  let len = 0;
+
+  for (let nums of intervals) {
+    len = len + (nums[1] - nums[0]);
+  }
 
   return len;
+}
+
+export function sumOfIntervals(intervals: [number, number][]) {
+  const overlappings = calArray(intervals);
+  return sum(overlappings);
 }
