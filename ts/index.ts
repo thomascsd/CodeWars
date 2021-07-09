@@ -1,4 +1,4 @@
-import { sumOfIntervals } from "./sum-of-intervals";
+import { sumOfIntervals } from './sum-of-intervals';
 let sum = 0;
 
 sum = sumOfIntervals([
@@ -34,3 +34,31 @@ sum = sumOfIntervals([
 ]);
 
 console.log(sum === 450);
+
+sum = sumOfIntervals([
+  [43, 77],
+  [399, 429],
+  [-225, 151],
+  [429, 442],
+  [-491, 4],
+  [-347, -307],
+  [-481, 101],
+  [-303, -133],
+  [-317, 243],
+  [-330, 184],
+  [142, 337],
+  [30, 288],
+  [-282, 157],
+  [-74, 281],
+]);
+
+console.log(sum === 871);
+
+sum = sumOfIntervals([
+  [224, 251],
+  [-466, -355],
+  [134, 142],
+  [75, 206],
+]);
+
+console.log(sum === 269);

@@ -25,9 +25,7 @@ sumOfIntervals([[1, 5], [10, 15], [-1, 3]]) // => 11
 sumOfIntervals([[1, 5]]) // => 4 
 */
 
-function calOverlappingArray(
-  intervals: [number, number][]
-): [number, number][] {
+function calOverlappingArray(intervals: [number, number][]): [number, number][] {
   let retList: [number, number][] = [];
   let x: number = 0;
   let y: number = 0;
@@ -47,7 +45,7 @@ function calOverlappingArray(
     // 判斷 x1及 y1 是否重疊，在 x ,y裡面 => x  x1  y1  y
     if (x1 > x && x1 < y && y1 > x && y1 < y) {
       continue;
-    } else if (x1 < x && x1 < y && y1 > x && y1 > y) {
+    } else if (x1 <= x && x1 < y && y1 > x && y1 >= y) {
       //  x1 x y y1
       x = x1;
       y = y1;
@@ -57,11 +55,11 @@ function calOverlappingArray(
     } else if (x1 <= x && x1 < y && y1 > x && y1 <= y) {
       // x1 x y1 y ，y1 重疊
       x = x1;
-    } else if (x1 > x && x1 > y && y1 > x && y1 > y) {
-      //x y x1 y1, 沒有重疊
-      //retList.push([x1, y1]);
+    } else if (x1 >= x && x1 >= y && y1 >= x && y1 >= y) {
+      // x y x1 y1, 沒有重疊
+      // retList.push([x1, y1]);
       retList = pushOverlapArray(retList, [x1, y1]);
-    } else if (x1 < x && x1 < y && y1 < x && y1 < y) {
+    } else if (x1 <= x && x1 <= y && y1 <= x && y1 <= y) {
       // x1 y1 x y，沒有重疊
       // retList.push([x1, y1]);
       retList = pushOverlapArray(retList, [x1, y1]);
@@ -102,11 +100,9 @@ function mergeOverlap2(x: number, y: number, x1: number, y1: number) {
   return { newX: x, newY: y };
 }
 
-function pushOverlapArray(
-  intervals: [number, number][],
-  nums: [number, number]
-): [number, number][] {
+function pushOverlapArray(intervals: [number, number][], nums: [number, number]): [number, number][] {
   let list: [number, number][] = [...intervals];
+  let tempNums: [number, number] = [0, 0];
   let x = 0,
     y = 0,
     x1 = nums[0],
@@ -129,19 +125,24 @@ function pushOverlapArray(
     for (let subNums of list) {
       x = subNums[0];
       y = subNums[1];
-      let tempNums: [number, number];
 
       let { newX, newY } = mergeOverlap2(x, y, x1, y1);
 
-      if (x !== newX && y !== newY) {
+      if (x !== newX || y !== newY) {
         tempNums = [newX, newY];
       } else {
         tempNums = [x, y];
       }
 
-      if (!list.some((values) => values[0] === x && values[1] === y)) {
+      //排除重覆的項目
+      if (!list.some((values) => values[0] === tempNums[0] && values[1] === tempNums[1])) {
         list = [...list, tempNums];
       }
+    }
+
+    // 將沒有重疊的nums，加入list
+    if (!list.some((values) => values[0] === tempNums[0] && values[1] === tempNums[1])) {
+      list = [...list, tempNums];
     }
   }
 
