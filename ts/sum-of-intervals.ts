@@ -160,6 +160,8 @@ function sum(intervals: [number, number][]): number {
 }
 
 export function sumOfIntervals(intervals: [number, number][]) {
+  console.log(intervals);
+  intervals.sort((a, b) => a[0] - b[0]);
   const overlappings = calOverlappingArray(intervals);
   return sum(overlappings);
 }
