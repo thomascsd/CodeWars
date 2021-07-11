@@ -10,10 +10,12 @@ namespace StringsMix
         private static void Main(string[] args)
         {
             string result;
-
             result = Mixing.Mix("looping is fun but dangerous", "less dangerous than coding");
 
             Console.WriteLine(result); //1:ooo/1:uuu/2:sss/=:nnn/1:ii/2:aa/2:dd/2:ee/=:gg
+
+            result = Mixing.Mix(" In many languages", " there's a pair of functions");
+            Console.WriteLine(result); // "1:aaa/1:nnn/1:gg/2:ee/2:ff/2:ii/2:oo/2:rr/2:ss/2:tt"
         }
     }
 
@@ -21,12 +23,16 @@ namespace StringsMix
     {
         public static string Mix(string s1, string s2)
         {
-            var dic1 = CountWords(s1);
-            var dic2 = CountWords(s2);
-            return CompareWords(dic1, dic2);
+            Console.WriteLine($"s1:{s1}");
+            Console.WriteLine($"s2:{s2}");
+
+            var mixs1 = CountWords('1', s1);
+            var mixs2 = CountWords('2', s2);
+
+            return string.Empty;
         }
 
-        private static Dictionary<string, List<string>> CountWords(string s)
+        private static List<Mixs> CountWords(char key, string s)
         {
             Regex reg = new Regex("[a-z]");
             var dic = new Dictionary<string, List<string>>();
@@ -54,56 +60,36 @@ namespace StringsMix
                 }
             }
 
-            return dic;
+            var mixs = dic
+                .Where(keyValue => keyValue.Value.Count > 1)
+                .Select(keyValue => new Mixs
+                {
+                    Key = key,
+                    Word = keyValue.Key,
+                    Count = keyValue.Value.Count
+                })
+                .ToList();
+
+            return mixs;
         }
 
         private static string CompareWords(
-            Dictionary<string, List<string>> s1,
-            Dictionary<string, List<string>> s2)
+            List<Mixs> mixs1,
+            List<Mixs> mixs2)
         {
             var results = new List<Mixs>();
 
-            foreach (string word in s1.Keys)
+            foreach (var mix in mixs1)
             {
-                var values1 = s1[word];
+                var item = mixs2
+                    .Where(m => m.Word == mix.Word)
+                    .FirstOrDefault();
 
-                if (s2.TryGetValue(word, out List<string> values2))
+                if (item == null)
                 {
-                    if (values1.Count == 1 && values2.Count == 1)
-                    {
-                        continue;
-                    }
-
-                    if (values1.Count > values2.Count)
-                    {
-                        results.Add(new Mixs
-                        {
-                            Key = '1',
-                            Word = word,
-                            Count = values1.Count,
-                            Value = "1:" + string.Join("", values1)
-                        });
-                    }
-                    else if (values1.Count < values2.Count)
-                    {
-                        results.Add(new Mixs
-                        {
-                            Key = '2',
-                            Word = word,
-                            Count = values2.Count,
-                            Value = "2:" + string.Join("", values2)
-                        });
-                    }
-                    else
-                    {
-                        results.Add(new Mixs
-                        {
-                            Key = '=',
-                            Word = word,
-                            Count = values1.Count,
-                            Value = "=:" + string.Join("", values1)
-                        });
-                    }
+                }
+                else
+                {
                 }
             }
 
