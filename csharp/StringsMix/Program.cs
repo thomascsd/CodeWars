@@ -15,24 +15,26 @@ namespace StringsMix
             Console.WriteLine(result); //1:ooo/1:uuu/2:sss/=:nnn/1:ii/2:aa/2:dd/2:ee/=:gg
 
             result = Mixing.Mix(" In many languages", " there's a pair of functions");
-            Console.WriteLine(result); // "1:aaa/1:nnn/1:gg/2:ee/2:ff/2:ii/2:oo/2:rr/2:ss/2:tt"
+            Console.WriteLine(result); // 1:aaa/1:nnn/1:gg/2:ee/2:ff/2:ii/2:oo/2:rr/2:ss/2:tt
+
+            result = Mixing.Mix("A generation must confront the looming ", "codewarrs");
+            Console.WriteLine(result); // 1:nnnnn/1:ooooo/1:tttt/1:eee/1:gg/1:ii/1:mm/=:rr
         }
     }
 
     public class Mixing
     {
+        private static List<Mixs> m_Results;
+
         public static string Mix(string s1, string s2)
         {
-            Console.WriteLine($"s1:{s1}");
-            Console.WriteLine($"s2:{s2}");
-
-            var mixs1 = CountWords('1', s1);
-            var mixs2 = CountWords('2', s2);
-
-            return string.Empty;
+            m_Results = new List<Mixs>();
+            var dic1 = CountWords(s1);
+            var dic2 = CountWords(s2);
+            return CompareWords(dic1, dic2);
         }
 
-        private static List<Mixs> CountWords(char key, string s)
+        private static Dictionary<string, List<string>> CountWords(string s)
         {
             Regex reg = new Regex("[a-z]");
             var dic = new Dictionary<string, List<string>>();
@@ -60,46 +62,85 @@ namespace StringsMix
                 }
             }
 
-            var mixs = dic
-                .Where(keyValue => keyValue.Value.Count > 1)
-                .Select(keyValue => new Mixs
-                {
-                    Key = key,
-                    Word = keyValue.Key,
-                    Count = keyValue.Value.Count
-                })
-                .ToList();
-
-            return mixs;
+            return dic;
         }
 
         private static string CompareWords(
-            List<Mixs> mixs1,
-            List<Mixs> mixs2)
+            Dictionary<string, List<string>> s1,
+            Dictionary<string, List<string>> s2)
         {
-            var results = new List<Mixs>();
+            CompareDictionary('1', '2', s1, s2);
+            CompareDictionary('2', '1', s2, s1);
 
-            foreach (var mix in mixs1)
-            {
-                var item = mixs2
-                    .Where(m => m.Word == mix.Word)
-                    .FirstOrDefault();
-
-                if (item == null)
-                {
-                }
-                else
-                {
-                }
-            }
-
-            var values = results
+            var retList = m_Results
                 .OrderByDescending(r => r.Count)
                 .ThenBy(r => ((short)r.Key))
                 .ThenBy(r => r.Word)
                 .Select(r => r.Value);
 
-            return string.Join("/", values);
+            return string.Join("/", retList);
+        }
+
+        private static void CompareDictionary(
+            char key1,
+            char key2,
+            Dictionary<string, List<string>> s1,
+            Dictionary<string, List<string>> s2)
+        {
+            List<string> values;
+            char key;
+
+            foreach (string word in s1.Keys)
+            {
+                var values1 = s1[word];
+
+                if (s2.TryGetValue(word, out List<string> values2))
+                {
+                    if (values1.Count == 1 && values2.Count == 1)
+                    {
+                        continue;
+                    }
+
+                    if (values1.Count > values2.Count)
+                    {
+                        key = key1;
+                        values = values1;
+                    }
+                    else if (values1.Count == values2.Count)
+                    {
+                        key = '=';
+                        values = values1;
+                    }
+                    else
+                    {
+                        key = key2;
+                        values = values2;
+                    }
+                }
+                else
+                {
+                    if (values1.Count == 1)
+                    {
+                        continue;
+                    }
+
+                    key = key1;
+                    values = values1;
+                }
+
+                string value = key + ":" + string.Join("", values);
+
+                if (!m_Results.Any(m => m.Value == value))
+                {
+                    m_Results.Add(new Mixs
+                    {
+                        Key = key,
+                        Word = word,
+                        Count = values.Count,
+                        Value = value
+                    });
+                }
+            }
         }
 
         private class Mixs
