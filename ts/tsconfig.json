@@ -1,7 +1,9 @@
 {
   "extends": "./node_modules/tsconfigs/nodejs-module",
   "compilerOptions": {
-    "outDir": "lib"
+    "outDir": "lib",
+    "module": "esnext",
+    "moduleResolution": "node"
   },
   "include": ["*"]
 }

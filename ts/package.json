@@ -11,6 +11,7 @@
     "printWidth": 120,
     "singleQuote": true
   },
+  "type": "module",
   "author": "",
   "license": "MIT",
   "devDependencies": {
